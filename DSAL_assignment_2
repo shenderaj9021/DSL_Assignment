@@ -1,0 +1,217 @@
+#include<iostream>
+using namespace std;
+class Node{
+	string key;
+	string mean;
+	Node* right;
+	Node* left;
+public:
+
+	Node(string k,string m){
+		this->key =k;
+		this->mean = m;
+		this->left =NULL;
+		this->right=NULL;
+	}
+	friend class dictionary;
+};
+class dictionary{
+	Node* head;
+public:
+	dictionary(){
+		head=NULL;
+	}
+	Node* getroot(){
+		return this->head;
+	}
+	void create_dictionary();   //creation
+	void insert_key();	//insertion
+	Node* del(Node* root,string k);
+	void Inorder(Node* root);
+	Node* successor(Node* root);
+	Node* search(string k);
+	void update();
+};
+void dictionary:: create_dictionary(){
+
+	if(head==NULL){
+		string k;
+		string m;
+		cout<<"Enter a key you want to insert"<<endl;
+		cin >> k;
+		cout<<"Enter a meaning of key"<<endl;
+		cin >> m;
+		Node* new_node = new Node(k,m);
+		head = new_node;
+		cout<<"Insertion done"<<endl;
+	}else{
+		insert_key();
+	}
+}
+void dictionary::insert_key(){
+	string k;
+	string m;
+	cout<<"Enter a key you want to insert"<<endl;
+	cin >> k;
+	cout<<"Enter a meaning of key"<<endl;
+	cin >> m;
+	cout<<"Insertion complet7"<<endl;
+	Node* new_node = new Node(k,m);
+	if(head==NULL){
+		cout<<"root NULL"<<endl;
+		head=new_node;
+	}
+else{
+	Node* root = head;
+	while(true){
+		if(root->key<new_node->key){
+			if(root->right==NULL){
+				root->right=new_node;
+				break;
+			}
+			root = root->right;
+		}else if(root->key>new_node->key){
+			if(root->left==NULL){
+				root->left = new_node;
+				break;
+			}
+			root = root->left;
+		}
+	}
+}
+
+}
+void dictionary::Inorder(Node* root){
+	if(root==NULL){
+		cout<<"It is an empty tree"<<endl;
+	}
+
+		if(root->left!=NULL){
+			Inorder(root->left);
+		}
+		cout<<root->key<<"  "<<root->mean<<endl;
+		if(root->right!=NULL){
+			Inorder(root->right);
+		}
+}
+Node* dictionary:: del(Node* root,string key){
+	if(root==NULL){
+		return NULL;
+	}
+	if(key<root->key){
+		root->left= del(root->left,key);
+		return root;
+	}else if(key>root->key){
+		root->right = del(root->right,key);
+		return root;
+	}else{
+		if(root->left==NULL && root->right==NULL){
+			return NULL;
+		}else if(root->left==NULL){
+			Node* temp ;
+			temp = root->right;
+			delete(root);
+			return temp;
+		}else if(root->right==NULL){
+			Node* temp;
+			temp = root->left;
+			delete(root);
+			return temp;
+		}
+		Node* temp = successor(root->right);
+		root->key = temp->key;
+		root->mean = temp->mean;
+		 root->right = del(root->right,temp->key);
+		return root;
+	}
+	return NULL;
+}
+
+Node* dictionary::successor(Node* node){
+	Node* curr = node;
+	while(curr && curr->left!=NULL){
+		curr = curr->left;
+	}
+	return curr;
+}
+Node* dictionary::search(string k){
+	Node* root = head;
+	while(true){
+		if(root->key==k){
+			cout<<"k"
+				 cout<<k<<" "<<root->mean<<endl;
+				 return root;
+				 break;
+		}else if(root->key<k){
+			root=root->right;
+		}else if(root->key>k){
+			root=root->left;
+		}else if(root==NULL){
+			cout<<"Key not found";
+			return NULL;
+		}
+	}
+}
+void dictionary::update(){
+	string k;
+	cout<<"Enter a key you want to update";
+	cin >> k;
+	if(search(k)){
+		char ans;
+		cout<<"What you want to update key or meaning k/m";
+		cin >> ans;
+		Node* sn = search(k);
+		if(ans=='k'){
+			string meaning = sn->mean;
+			del(this->getroot(),k);
+			insert_key();
+		}else{
+			cout<<"Enter meaning"<<endl;
+			string s;
+			cin >> s;
+			sn->mean = s;
+		}
+	}
+}
+int main(){
+	dictionary d;
+
+	int flag =1;
+	while(flag==1){
+		cout<<"welcome"<<endl;
+			cout<<"1] create bst"<<endl;
+			cout<<"2] insert key"<<endl;
+			cout<<"3] print bst"<<endl;
+			cout<<"4] delete"<<endl;
+			cout<<"5] search "<<endl;
+			cout<<"6] Update "<<endl;
+			cout<<"7] exit"<<endl;
+		int choice;
+		cin>> choice;
+		if(choice==1){
+			d.create_dictionary();
+		}else if(choice==2){
+			d.insert_key();
+		}else if(choice==3){
+			d.Inorder(d.getroot());
+		}else if(choice==4){
+			string s;
+			cout<<"Enter a key you want to delete"<<endl;
+			cin>>s;
+			Node* h = d.getroot();
+			h = d.del(d.getroot(),s);
+
+		}else if(choice==5){
+				string k;
+				cout<<"Enter a key you want to search"<<endl;
+				cin>>k;
+			   Node* temp=d.search(k);
+
+		}else if(choice==6){
+			d.update();
+		}
+		else if(choice==7){
+			flag =2;
+		}
+	}
+}
