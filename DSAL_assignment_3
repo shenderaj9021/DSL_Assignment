@@ -1,0 +1,135 @@
+//============================================================================
+// Name        : Assign_3_tbst.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+using namespace std;
+
+class node{
+	node* left;
+	node* right;
+	int data;
+	int lbit,rbit;
+public:
+	node(){
+		left = NULL;
+		right=NULL;
+		data=0;
+		lbit =0;
+		rbit =0;
+	}
+	node(int d){
+		left = NULL;
+			right=NULL;
+			data=d;
+			lbit =0;
+			rbit =0;
+	}
+	friend class tbt;
+};
+class tbt{
+	node* root;
+	node* header;
+public:
+	tbt(){					  //constructor for tbt
+		root=NULL;
+		header =new node(-1);
+		header->left =header->right = header;
+		header->lbit =0;
+		header->rbit =1;
+	}
+	void create();
+	void inorder_tbt();
+
+};
+
+void tbt::create(){
+	int temp;
+	cout<<"Enter a data you want to insert"<<endl;
+	cin>>temp;
+	if(root==NULL){
+		root= new node(temp);         //creating root
+		root->lbit = 0;
+		root->rbit = 0;     //root left right not contain link
+		header->left=root;
+		header->lbit = 1;
+		root->left = header;
+		root->right = header;
+		cout<<"Your data is inserted t root"<<endl;
+	}else{
+		node* curr = root;
+
+//		while(curr->left!=header || curr->right!=header){
+		while(curr!=header){
+			cout<<"current data - "<<curr->data<<endl;
+			if(curr->data>temp){
+
+				node* new_node = new node(temp);
+				if(curr->lbit==0){
+					new_node ->left = curr->left;       //new_node inorder predecessor = curr inorder predecessor
+					new_node->lbit =0;				//new_node left is thread
+					new_node->rbit =0;				// new_node right is thread
+					new_node->right = curr;			//new node succesor =curr
+					curr->left = new_node;		     //curr left will be new node
+					curr->lbit =1;					//curr left is link
+					cout<<"Yout data is inserted "<<endl;
+					break;
+				}else{
+					curr = curr->left;
+				}
+
+			}
+			else if(curr->data<temp){
+
+				node* new_node = new node(temp);
+				if(curr->rbit==0){
+
+					new_node ->right = curr->right;       //new_node inorder succesor = curr inorder succecessor
+					new_node->rbit =0;				//new_node right is thread
+					new_node->lbit =0;				// new_node right is thread
+					new_node->left = curr;			//new node succesor =curr
+					curr->rbit =1;					//curr left is link
+					curr->right = new_node;		     //curr left will be new node
+					cout<<"Yout data is inserted "<<endl;
+					break;
+				}else{
+					curr = curr->right;
+				}
+			}
+		}
+	}
+}
+
+void tbt::inorder_tbt(){
+	node* curr = this->root;
+	while(curr->lbit==1){
+		curr = curr->left;
+	}
+	while(curr!=header){
+		cout<<curr->data<<" ";
+		if(curr->rbit==1){
+			curr=curr->right;
+			while(curr->lbit==1){
+				curr=curr->left;
+			}
+		}else{
+			curr=curr->right;
+		}
+	}
+}
+
+int main(){
+	tbt t;
+	int v;
+	cout<<"Enter number of elements you want to insert"<<endl;
+	cin>> v;
+	for(int i=0;i<v;i++){
+		t.create();
+	}
+	t.inorder_tbt();
+
+}
