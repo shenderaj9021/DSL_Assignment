@@ -1,0 +1,202 @@
+#include<iostream>
+using namespace std;
+
+class item{
+public:
+	int tele;
+	string name;
+	void assign(string name,int tele){
+		this->tele = tele;
+		this->name = name;
+	}
+	void disp(){
+		cout<<"Name- "<<name<<" Teleohone no "<<tele<<endl;
+	}
+	void dele(){
+		this->name="NULL";
+		this->tele=-1;
+	}
+};
+class hashtable{
+private:
+	item arr_r[26];
+	item arr_wr[26];
+	int hashfunc(string s){
+		int temp = s[0]+0;
+		temp=temp-97;
+		return temp%26;
+	}
+public:
+	hashtable(){
+		cout<<"Hashtable created "<<endl;
+		for(int i=0;i<26;i++){
+			arr_r[i].name="NULL";
+			arr_r[i].tele=-1;
+			arr_wr[i].name="NULL";
+			arr_wr[i].tele=-1;
+		}
+	}
+	void insert(string value,int no){
+		int pos = hashfunc(value);
+		cout<<pos<<endl;
+		if(arr_r[pos].name!="NULL"){
+			if(hashfunc(arr_r[pos].name)==pos){
+				linear_prob(value,no,pos,arr_r);
+			}else{
+				string s = arr_r[pos].name;
+				int tel = arr_r[pos].tele;
+				arr_r[pos].assign(value, no);
+				linear_prob(s,tel,pos,arr_r);
+			}
+		}else{
+			arr_r[pos].assign(value,no);
+			cout<<"Elememt inserted"<<endl;
+		}
+		if(arr_wr[pos].name!="NULL"){
+			linear_prob(value,no,pos,arr_wr);
+		}else{
+			arr_wr[pos].assign(value,no);
+			cout<<"Elememt inserted"<<endl;
+		}
+	}
+	void linear_prob(string value,int no,int p,item arr[]){
+
+		for(int i=0;i<26;i++){
+			int pos=p+i;
+			if(pos>25){
+				pos=0;
+			}
+			if(arr[pos].name=="NULL"){
+				arr[pos].name =value;
+				arr[pos].tele = no;
+				cout<<"Elememt inserted"<<endl;
+				return ;
+			}
+		}
+		cout<<"Hashtable is full "<<endl;
+		return;
+	}
+
+	void display(){
+		cout<<"Hashtable with replace is "<<endl;
+		for(int i=0;i<26;i++){
+			if(arr_r[i].name!="NULL"){
+				cout<<i<<"  "<<arr_r[i].name<<"  "<<arr_r[i].tele<<endl;
+			}
+		}
+		cout<<"Hashtable without raplacement is "<<endl;
+		for(int i=0;i<26;i++){
+			if(arr_wr[i].name!="NULL"){
+				cout<<i<<"  "<<arr_wr[i].name<<"  "<<arr_wr[i].tele<<endl;
+			}
+		}
+	}
+
+	int search(string value){
+		int pos = hashfunc(value);
+		cout<<"Choose correct option "<<endl;;
+		cout<<"1] Search in hashtable with replacement "<<endl;
+		cout<<"2] Search is hashtable without replacement "<<endl;
+		int temp;
+		cin>> temp;
+		if(temp==1){
+			if(arr_r[pos].name ==value){
+				cout<<"Record found! "<<endl;
+				arr_r[pos].disp();
+				return pos;
+			}else{
+				return linear_search(value,pos,arr_r);
+			}
+		}else if(temp==2){
+			if(arr_wr[pos].name==value){
+				cout<<"Record found !"<<endl;
+				arr_wr[pos].disp();
+				return pos;
+			}else{
+				return linear_search(value,pos,arr_wr);
+			}
+		}
+		return -1;
+	}
+	int  linear_search(string value,int pos,item arr[]){
+		for(int i=0;i<26;i++){
+			pos=pos+i;
+			if(pos>25){
+				pos=0;
+			}
+			if(arr_r[pos].name ==value){
+				cout<<"Record found! "<<endl;
+				arr_r[pos].disp();
+				return pos;
+			}
+		}
+		cout<<"Record not Found "<<endl;
+		return -1 ;
+	}
+	void del(string value){
+		int pos = hashfunc(value);
+		if(arr_r[pos].name ==value){
+		cout<<"Record found! "<<endl;
+		arr_r[pos].disp();
+		arr_r[pos].dele();
+		}else{
+			int p=linear_search(value,pos,arr_r);
+			if(p==-1){
+				cout<<"cannot be deleted"<<endl;
+			}
+			arr_r[p].dele();
+		}
+		if(arr_wr[pos].name==value){
+			arr_wr[pos].dele();
+			}else{
+				int p= linear_search(value,pos,arr_wr);
+				if(p==-1){
+					cout<<"cannot be deleted"<<endl;
+
+				}
+				arr_r[p].dele();
+			}
+		cout<<"Operation successful "<<endl;
+	}
+
+
+};
+int main(){
+	hashtable h;
+	cout<<" ___ Welcome___ "<<endl;
+	while(true){
+	cout<<"Chosse correct option "<<endl;
+	cout<<" 1] Insert Record \n 2] Search \n 3]Delete \n 4] Display \n 5] Exit "<<endl;
+	int ch;
+	cin>> ch;
+	if(ch==1){
+		string nme;
+		int tel;
+		cout<<"Enter name "<<endl;
+		cin >> nme;
+		cout<<"Enter Telephone number "<<endl;
+		cin >> tel;
+		h.insert(nme,tel);
+	}else if(ch==2){
+		string nme;
+		cout<<"Enter name search "<<endl;
+		cin >> nme;
+		int pos = h.search(nme);
+		if(pos==-1){
+			cout<<"Record not Found "<<endl;
+		}
+	}else if(ch==3){
+		string nme;
+		cout<<"Enter Reacord to delete "<<endl;
+		cin >> nme;
+		h.del(nme);
+	}else if(ch==4){
+		h.display();
+	}else if(ch==5){
+		break;
+	}else{
+		cout<<"Please select correct choice "<<endl;
+	}
+	}
+		return 0;
+}
