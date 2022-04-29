@@ -1,0 +1,134 @@
+#include<iostream>
+using namespace std;
+class item{
+	string name;
+	int tele;
+	item* next;
+public:
+	item(){
+		name ="NULL";
+		tele =-1;
+		next=NULL;
+	}
+	item(string s,int tele){
+		this->name = s;
+		this->tele = tele;
+		next =NULL;
+	}
+	friend class hashtable;
+};
+class hashtable{
+private:
+	item* arr[26];
+public:
+	int hashfunc(string s){
+		int temp = s[0]+0;
+		temp=temp-97;
+		return temp%26;
+	}
+	hashtable(){
+		for(int i=0;i<26;i++){
+			arr[i]=NULL;
+		}
+	}
+	void insert(string value,int tele){
+		int pos = hashfunc(value);
+		item* it = new item(value,tele);
+		if(arr[pos]==NULL){
+			arr[pos]=it;
+		}else{
+			it->next = arr[pos];
+			arr[pos]=it;
+		}
+	}
+	void search(string value){
+		int pos = hashfunc(value);
+		if(arr[pos]==NULL){
+			cout<<"Record Not found "<<endl;
+			return ;
+		}else{
+			item* it = arr[pos];
+			while(it!=NULL){
+				if(it->name==value){
+					cout<<"Record found "<<endl;
+					return ;
+				}
+				it=it->next;
+			}
+
+		}
+		cout<<"Record Not Found "<<endl;
+		return ;
+	}
+	void display(){
+		for(int i=0;i<26;i++){
+			if(arr[i]!=NULL){
+				item* it = arr[i];
+				while(it!=NULL){
+					cout<<i+1<<"] Name - "<<it->name<<" Telephone no - "<<it->tele<<endl;
+					it=it->next;
+				}
+			}
+		}
+	}
+	void del(string value){
+		int pos = hashfunc(value);
+		if(arr[pos]==NULL){
+			cout<<"Record Not Found "<<endl;
+		}else{
+			item* it = arr[pos];
+			item* prev = arr[pos];
+			while(it->name!=value){
+				prev= it;
+				it=it->next;
+				if(it==NULL){
+					cout<<"Element not found"<<endl;
+					return;
+				}
+			}
+			prev = it->next;
+			cout<<"Element Deleted succefully"<<endl;
+			return ;
+		}
+	}
+
+};
+int main()
+{
+	hashtable h;
+	cout<<" ___ Welcome___ "<<endl;
+	while(true){
+		cout<<"______________________________________________"<<endl;
+		cout<<"Chosse correct option "<<endl;
+		cout<<" 1] Insert Record \n 2] Search \n 3]Delete \n 4] Display \n 5] Exit "<<endl;
+		int ch;
+		cin>> ch;
+		if(ch==1){
+			string nme;
+			int tel;
+			cout<<"Enter name "<<endl;
+			cin >> nme;
+			cout<<"Enter Telephone number "<<endl;
+			cin >> tel;
+			h.insert(nme,tel);
+		}else if(ch==2){
+			string nme;
+			cout<<"Enter name search "<<endl;
+			cin >> nme;
+			int pos = h.search(nme);
+			h.search(nme);
+		}else if(ch==3){
+			string nme;
+			cout<<"Enter Record to delete "<<endl;
+			cin >> nme;
+			h.del(nme);
+		}else if(ch==4){
+			h.display();
+		}else if(ch==5){
+			break;
+		}else{
+			cout<<"Please select correct choice "<<endl;
+		}
+		}
+	return 0;
+}
